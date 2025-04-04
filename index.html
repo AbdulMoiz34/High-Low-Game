@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>High-Low Game</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Flowbite CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@1.5.0/dist/flowbite.min.css" rel="stylesheet">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-gray-900 text-gray-100">
+    <div class="flex justify-center items-center min-h-screen">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-lg relative">
+            <div class="timelimit-box absolute md:right-12 sm:right-10 right-5 font-bold md:text-4xl text-2xl">
+                <p id="time-limit"></p>
+            </div>
+            <h1 class="text-3xl text-center text-yellow-400 font-semibold mb-4">High-Low Game</h1>
+
+            <!-- Start Screen -->
+            <div id="start-screen" class="">
+                <form onsubmit="startGameHandler()">
+                    <!-- Player Name Input -->
+                    <div class="mb-4">
+                        <label for="player-name" class="block text-sm font-medium text-gray-300">Enter your
+                            Name:</label>
+                        <input type="text" id="player-name" class="w-full mt-2 p-2 rounded-lg bg-gray-700 text-gray-200"
+                            placeholder="Your Name" required>
+                    </div>
+
+                    <!-- Difficulty Level Dropdown -->
+                    <div class="mb-4">
+                        <label for="difficulty" class="block text-sm font-medium text-gray-300">Select
+                            Difficulty:</label>
+                        <select onchange="difficultyChangeHandler()" id="difficulty"
+                            class="w-full mt-2 p-2 rounded-lg bg-gray-700 text-gray-200" required>
+                            <option value="" disabled selected>Select Difficulty</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                    </div>
+                    <!-- Rounds Input -->
+                    <div class="mb-4 hidden" id="rounds-box">
+                        <label for="rounds" class="block text-sm font-medium text-gray-300">Select Rounds:</label>
+                        <input type="number" id="rounds" class="w-full mt-2 p-2 rounded-lg bg-gray-700 text-gray-200"
+                            min="1" max="10" value="5" required>
+                    </div>
+
+                    <!-- Start Game Button -->
+                    <div class="text-center">
+                        <button type="submit"
+                            class="px-6 py-2 mt-4 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition duration-300">Start
+                            Game</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Game Screen (Hidden initially) -->
+            <div id="game-screen" class="mt-8 hidden">
+                <p class="text-lg text-center text-gray-300">Welcome, <span id="display-name"
+                        class="font-bold text-yellow-400">Player</span>!</p>
+
+                <!-- Scoreboard -->
+                <div class="flex justify-between text-sm mt-4">
+                    <p>Score: <span id="score" class="font-bold">0</span></p>
+                    <p>Round: <span id="round" class="font-semibold">1</span> / <span id="total-rounds">5</span></p>
+                </div>
+
+                <!-- Numbers Display -->
+                <div class="mt-6 px-4">
+                    <!-- Your Number Section -->
+                    <div class="flex justify-between items-center">
+                        <p class="text-xl font-semibold">Your Number:
+                            <span id="player-number" class="font-bold text-yellow-400">?</span>
+                        </p>
+
+                        <!-- Hint Icon with improved accessibility and styling -->
+                        <button 
+                            data-tooltip-target="tooltip-animation" 
+                            type="button"
+                            aria-label="Show hint"
+                            class="text-white hover:text-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded-lg text-sm p-2.5 transition-colors duration-200">
+                            <i class="fa-solid fa-lightbulb text-yellow-500 text-lg"></i>
+                        </button>
+                        <div 
+                            id="tooltip-animation" 
+                            role="tooltip"
+                            aria-hidden="true"
+                            class="absolute z-10 invisible inline-block px-4 py-3 text-sm font-medium 
+                                   text-white bg-gray-900 rounded-lg shadow-lg opacity-0 tooltip 
+                                   dark:bg-gray-700 backdrop-blur-sm border border-gray-700
+                                   transform transition-all duration-300 ease-in-out">
+                            <span class="font-semibold">Hint:</span> Number is between 01 to 50
+                            <div class="tooltip-arrow" data-popper-arrow></div>
+                        </div>
+                    </div>
+                    <!-- Computer's Number Section -->
+                    <p class="text-xl font-semibold">Computer's Number:
+                        <span id="computer-number" class="font-bold text-pink-400">?</span>
+                    </p>
+                </div>
+
+                <!-- Guessing Buttons -->
+                <div class="flex justify-center gap-6 mt-4">
+                    <button id="guess-higher" onclick="handler()"
+                        class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 capitalize">higher</button>
+                    <button id="guess-lower" onclick="handler()"
+                        class="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 capitalize">lower</button>
+                </div>
+
+                <!-- Result Message -->
+                <p id="result-message" class="text-center text-lg mt-4 text-gray-300"></p>
+
+                <!-- Next Round Button -->
+                <div class="text-center mt-4">
+                    <button id="new-round" onclick="nextRound()"
+                        class="hidden px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300">Next
+                        Round</button>
+                </div>
+            </div>
+            <div class="result-screen hidden max-w-md p-6 bg-transparent text-white rounded-2xl text-center"
+                id="resultScreen">
+                <h2 class="text-2xl font-bold" id="resultMessage">🎉 You Won!😎</h2>
+                <p class="text-lg mt-2">Your Score: <span id="scoreDisplay" class="s font-bold text-2xl">95</span></p>
+                <p class="text-lg mt-2">Your Percentage: <span id="percentDisplay" class="s font-bold text-xl">95</span>
+                </p>
+                <div class="mt-6">
+                    <button id="playAgain" onclick="restartGame()"
+                        class="px-6 py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition">Play
+                        Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Music Button -->
+    <div class="fixed left:0 sm:right-4 top-1/4 z-50 flex flex-col items-end">
+        <button id="musicBtn" data-modal-target="customModal" data-modal-toggle="customModal"
+            class="w-12 h-12 flex items-center justify-center bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-all duration-300">
+            🎵
+        </button>
+    </div>
+
+    <!-- Custom Modal for Songs -->
+    <div id="customModal" tabindex="-1" aria-hidden="true"
+        class="fixed inset-0 z-50 flex-col items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="flex justify-between items-center p-2">
+            <h3 class="text-xl font-bold ">Available Songs</h3>
+        </div>
+        <div class="musics-container relative  h-2/4 w-3/4 overflow-y-auto text-white custom-scrollbar pr-2">
+            <div class="gap-6" id="playlist"> </div>
+        </div>
+    </div>
+
+    <!-- Flowbite JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
