@@ -83,18 +83,11 @@
                         </p>
 
                         <!-- Hint Icon with improved accessibility and styling -->
-                        <button 
-                            data-tooltip-target="tooltip-animation" 
-                            type="button"
-                            aria-label="Show hint"
+                        <button data-tooltip-target="tooltip-animation" type="button" aria-label="Show hint"
                             class="text-white hover:text-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 rounded-lg text-sm p-2.5 transition-colors duration-200">
                             <i class="fa-solid fa-lightbulb text-yellow-500 text-lg"></i>
                         </button>
-                        <div 
-                            id="tooltip-animation" 
-                            role="tooltip"
-                            aria-hidden="true"
-                            class="absolute z-10 invisible inline-block px-4 py-3 text-sm font-medium 
+                        <div id="tooltip-animation" role="tooltip" aria-hidden="true" class="absolute z-10 invisible inline-block px-4 py-3 text-sm font-medium 
                                    text-white bg-gray-900 rounded-lg shadow-lg opacity-0 tooltip 
                                    dark:bg-gray-700 backdrop-blur-sm border border-gray-700
                                    transform transition-all duration-300 ease-in-out">
@@ -145,21 +138,69 @@
     <div class="fixed left:0 sm:right-4 top-1/4 z-50 flex flex-col items-end">
         <button id="musicBtn" data-modal-target="customModal" data-modal-toggle="customModal"
             class="w-12 h-12 flex items-center justify-center bg-green-500 text-white rounded-full shadow-lg hover:bg-green-600 transition-all duration-300">
-            🎵
+            <i class="fa-solid fa-music text-white"></i>
         </button>
     </div>
 
-    <!-- Custom Modal for Songs -->
+    <!-- Custom Modal -->
     <div id="customModal" tabindex="-1" aria-hidden="true"
-        class="fixed inset-0 z-50 flex-col items-center justify-center bg-black bg-opacity-50 hidden">
-        <div class="flex justify-between items-center p-2">
-            <h3 class="text-xl font-bold ">Available Songs</h3>
-        </div>
-        <div class="musics-container relative  h-2/4 w-3/4 overflow-y-auto text-white custom-scrollbar pr-2">
-            <div class="gap-6" id="playlist"> </div>
+        class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative w-full max-w-xl max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-gray-800 rounded-lg shadow">
+                <!-- Modal header -->
+                <div class="flex items-start justify-between p-4 border-b rounded-t border-gray-600">
+                    <h3 class="text-xl font-semibold text-white">
+                        Music Player
+                    </h3>
+                    <button type="button"
+                        class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                        data-modal-hide="customModal">
+                        <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="p-6 space-y-6">
+                    <div class="flex flex-col gap-4" id="playlist">
+                        <!-- Songs will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Keyboard Shortcuts Tooltip - Hidden on mobile -->
+    <div class="fixed bottom-4 right-4 bg-gray-800/90 text-white p-5 rounded-xl text-sm 
+            backdrop-blur-md border border-gray-600/30 shadow-2xl
+            hidden md:block transform transition-transform hover:scale-105" id="keyboard-shortcuts">
+        <div class="flex items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-8 h-8 flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600 rounded-lg shadow-lg">
+                    <i class="fa-solid fa-music text-white"></i>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="text-gray-200 font-medium">Song play shortcut:</span>
+                    <kbd class="px-3 py-1.5 bg-gray-700/50 text-gray-300 rounded-lg font-mono text-xs 
+                               border border-gray-600/50 shadow-inner hover:shadow-lg
+                               transition-all duration-300 hover:-translate-y-0.5">
+                        Space
+                    </kbd>
+                </div>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-white transition-colors duration-200 
+                           hover:rotate-90 transform p-1.5 hover:bg-gray-700/50 rounded-lg"
+                aria-label="Close shortcuts tooltip">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
     <!-- Flowbite JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.5/flowbite.min.js"></script>
     <script src="app.js"></script>

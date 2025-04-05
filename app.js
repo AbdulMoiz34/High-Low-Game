@@ -18,6 +18,7 @@ let score = 0;
 let playerNum, computerNum, totalRounds, timeLimit;
 let currentRound;
 let id;
+let isSpaceBarEnabled = true;
 
 const startGameHandler = () => {
     event.preventDefault();
@@ -274,14 +275,20 @@ function togglePlay(index, playBtn, progressBar, timeLabel) {
     if (currentlyPlayingIndex === index && !currentAudio.paused) {
         currentAudio.pause();
         playBtn.textContent = "▶️";
+        document.querySelectorAll('.play-btn').forEach(btn => btn.textContent = "▶️");
         return;
+    }
+
+    if (currentlyPlayingIndex !== null && currentlyPlayingIndex !== index) {
+        const previousPlayBtn = document.querySelectorAll('.play-btn')[currentlyPlayingIndex];
+        previousPlayBtn.textContent = "▶️";
+        currentAudio.pause();
     }
 
     if (currentlyPlayingIndex !== index) {
         currentAudio.src = playlist[index].preview;
         currentAudio.load();
 
-        // Get actual duration when metadata is loaded
         currentAudio.onloadedmetadata = function () {
             const duration = formatTime(currentAudio.duration);
             playlist[index].duration = duration;
@@ -313,4 +320,28 @@ function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+document.addEventListener('keydown', handleKeyPress);
+
+function handleKeyPress(event) {
+    if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+        return;
+    }
+
+    if (event.code === 'Space' && isSpaceBarEnabled) {
+        event.preventDefault(); // Prevent page scrolling
+        if (currentlyPlayingIndex !== null) {
+            const playBtn = document.querySelectorAll('.play-btn')[currentlyPlayingIndex];
+            const progressBar = document.querySelectorAll('.progress-bar')[currentlyPlayingIndex];
+            const timeLabel = document.querySelectorAll('span')[currentlyPlayingIndex];
+            togglePlay(currentlyPlayingIndex, playBtn, progressBar, timeLabel);
+        } else if (playlist.length > 0) {
+            // If nothing is playing, play the first song
+            const playBtn = document.querySelectorAll('.play-btn')[0];
+            const progressBar = document.querySelectorAll('.progress-bar')[0];
+            const timeLabel = document.querySelectorAll('span')[0];
+            togglePlay(0, playBtn, progressBar, timeLabel);
+        }
+    }
 }
