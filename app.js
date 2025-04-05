@@ -179,20 +179,27 @@ const showResult = () => {
     const scoreDisplay = document.getElementById("scoreDisplay");
     const percentDisplay = document.getElementById("percentDisplay");
     const percentage = calcPercentage();
+    let messageText;
     if (timeLimit < 0 && currentRound < totalRounds) {
-        message.textContent = "You Lost.⌚";
-    } else if (score == totalRounds && totalRounds >= 5) {
-        message.innerHTML = "🎉 Amazing! You Won!😎";
-    } else if (totalRounds - score < 3 && totalRounds > 5) {
-        message.innerHTML = "🎉 Excellent😃";
-    } else if (totalRounds - score < 5 && totalRounds > 5) {
-        message.innerHTML = "Good Job!🙂";
+        messageText = "You Lost.⌚";
+    } else if (score == totalRounds) {
+        messageText = "🎉 Amazing! You Won!😎";
+    } else if (totalRounds > 5) {
+        if (totalRounds - score < 3) {
+            messageText = "🎉 Excellent😃";
+        } else if (totalRounds - score < 5) {
+            messageText = "Good Job!🙂";
+        } else {
+            messageText = "You Lost!";
+        }
     } else {
-        message.innerHTML = "You Lost!";
+        messageText = "You Lost!";
     }
+
     resultScreen.classList.remove("hidden");
-    percentDisplay.textContent = percentage + "%";
+    message.innerHTML = messageText;
     scoreDisplay.innerHTML = score;
+    percentDisplay.textContent = `${percentage}%`;
 }
 
 const updateHint = (difficulty) => {
@@ -252,12 +259,12 @@ playlist.forEach((track, index) => {
             </div>
         </div>
         <button class="play-btn p-2 text-gray-300 hover:text-white">▶️</button>
-        <span class="text-xs text-gray-400 min-w-[70px]">0:00 / ${durationText}</span>
+        <span class="text-xs text-gray-400 min-w-[70px] song-duration">0:00 / ${durationText}</span>
     `;
 
     const playBtn = trackEl.querySelector('.play-btn');
     const progressBar = trackEl.querySelector('.progress-bar');
-    const timeLabel = trackEl.querySelector('span');
+    const timeLabel = trackEl.querySelector('.song-duration');
 
     // Pre-load audio to get duration
     const tempAudio = new Audio(track.preview);
@@ -334,13 +341,13 @@ function handleKeyPress(event) {
         if (currentlyPlayingIndex !== null) {
             const playBtn = document.querySelectorAll('.play-btn')[currentlyPlayingIndex];
             const progressBar = document.querySelectorAll('.progress-bar')[currentlyPlayingIndex];
-            const timeLabel = document.querySelectorAll('span')[currentlyPlayingIndex];
+            const timeLabel = document.querySelectorAll('.song-duration')[currentlyPlayingIndex];
             togglePlay(currentlyPlayingIndex, playBtn, progressBar, timeLabel);
         } else if (playlist.length > 0) {
             // If nothing is playing, play the first song
             const playBtn = document.querySelectorAll('.play-btn')[0];
             const progressBar = document.querySelectorAll('.progress-bar')[0];
-            const timeLabel = document.querySelectorAll('span')[0];
+            const timeLabel = document.querySelectorAll('.song-duration')[0];
             togglePlay(0, playBtn, progressBar, timeLabel);
         }
     }
