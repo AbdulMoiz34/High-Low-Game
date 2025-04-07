@@ -83,9 +83,7 @@ const handler = () => {
     }
 }
 
-
 const roundsInput = document.getElementById("rounds");
-
 const setGameDifficulty = (difficulty) => {
     let limit;
     if (difficulty === "easy") {
@@ -128,7 +126,6 @@ const nextRound = () => {
     showPlayerNumEl.textContent = playerNum;
     showCompNumEl.textContent = "?";
 };
-
 
 const handleTimeLimit = () => {
     id = setInterval(() => {
@@ -213,7 +210,6 @@ const updateHint = (difficulty) => {
     }
 };
 
-// Musics/songs functionality
 const playlist = [
     {
         title: "Song 1",
@@ -222,61 +218,104 @@ const playlist = [
         art: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTXtoK98tZjsGO4yuujrv66etC1jF0EwQepA&s"
     },
     {
-        title: "Song 2",
         artist: "Tropical Vibes",
         preview: "./songs/2.mp3",
         art: "https://png.pngtree.com/background/20211217/original/pngtree-tropical-vibes-background-picture-image_1591024.jpg"
     },
-    { title: "Song 3", artist: "Chill Beats", preview: "./songs/3.mp3", art: "https://i.scdn.co/image/ab6761610000e5ebc6afe9e8ce9516d4684e13db" },
-    { title: "Rap⚡", artist: "Chill Beats", preview: "./songs/4.mp3", art: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6lo5alrXWZx2afYmQ3Xjt49qt2A7_Z-_dGQ&s" },
-    { title: "Song 5", artist: "Chill Beats", preview: "./songs/5.mp3", art: "https://source.unsplash.com/random/800x800/?vinyl" },
-    { title: "Song 6", artist: "Chill Beats", preview: "./songs/6.mp3", art: "https://source.unsplash.com/random/800x800/?vinyl" },
-    { title: "Song 07", artist: "Chill Beats", preview: "./songs/7.mp3", art: "https://source.unsplash.com/random/800x800/?vinyl" },
-    { title: "Song 08", artist: "Chill Beats", preview: "./songs/8.mp3", art: "https://source.unsplash.com/random/800x800/?vinyl" },
-    { title: "Song 09", artist: "Chill Beats", preview: "./songs/9.mp3", art: "https://source.unsplash.com/random/800x800/?vinyl" },
-    { title: "Song 10", artist: "Chill Beats", preview: "./songs/10.mp3", art: "https://source.unsplash.com/random/800x800/?vinyl" },
-    { title: "Song 11", artist: "Chill Beats", preview: "./songs/11.mp3", art: "https://source.unsplash.com/random/800x800/?vinyl" }
+    {
+        title: "Song 3",
+        artist: "Chill Beats", preview: "./songs/3.mp3",
+        art: "https://i.scdn.co/image/ab6761610000e5ebc6afe9e8ce9516d4684e13db"
+    },
+    {
+        title: "Rap⚡",
+        artist: "Chill Beats", preview: "./songs/4.mp3",
+        art: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ6lo5alrXWZx2afYmQ3Xjt49qt2A7_Z-_dGQ&s"
+    },
+    {
+        title: "Song 5",
+        artist: "Chill Beats", preview: "./songs/5.mp3",
+        art: "https://source.unsplash.com/random/800x800/?vinyl"
+    },
+    {
+        title: "Song 6",
+        artist: "Chill Beats", preview: "./songs/6.mp3",
+        art: "https://source.unsplash.com/random/800x800/?vinyl"
+    },
+    {
+        title: "Song 07",
+        artist: "Chill Beats", preview: "./songs/7.mp3",
+        art: "https://source.unsplash.com/random/800x800/?vinyl"
+    },
+    {
+        title: "Song 08",
+        artist: "Chill Beats", preview: "./songs/8.mp3",
+        art: "https://source.unsplash.com/random/800x800/?vinyl"
+    },
+    {
+        title: "Song 09",
+        artist: "Chill Beats", preview: "./songs/9.mp3",
+        art: "https://source.unsplash.com/random/800x800/?vinyl"
+    },
+    {
+        title: "Song 10",
+        artist: "Chill Beats", preview: "./songs/10.mp3",
+        art: "https://source.unsplash.com/random/800x800/?vinyl"
+    },
+    {
+        title: "Song 11",
+        artist: "Chill Beats", preview: "./songs/11.mp3",
+        art: "https://source.unsplash.com/random/800x800/?vinyl"
+    }
 ];
 
 const playlistEl = document.getElementById('playlist');
 let currentAudio = new Audio();
 let currentlyPlayingIndex = null;
 
-playlist.forEach((track, index) => {
-    const trackEl = document.createElement('div');
-    trackEl.className = "mt-4 bg-gray-800 p-4 rounded-lg flex items-center gap-4 transition hover:bg-gray-700";
+function initMusicPlayer() {
+    if (playlistEl.children.length > 0) return;
 
-    // Initially set duration as loading
-    let durationText = "Loading...";
+    playlist.forEach((track, index) => {
+        const trackEl = document.createElement('div');
+        trackEl.className = "mt-4 bg-gray-800 p-4 rounded-lg flex items-center gap-4 transition hover:bg-gray-700";
 
-    trackEl.innerHTML = `
-        <img src="${track.art}" class="w-14 h-14 rounded-lg shadow-lg" alt="${track.title}" />
-        <div class="flex-1 min-w-0">
-            <h3 class="text-white font-medium truncate">${track.title}</h3>
-            <p class="text-gray-400 text-sm truncate">${track.artist}</p>
-            <div class="relative w-full h-2 bg-gray-600 rounded mt-2 overflow-hidden">
-                <div class="progress-bar bg-blue-500 h-full w-0"></div>
+        const durationSpinner = '<span class="inline-block w-3 h-3 border-2 border-gray-400 border-t-blue-500 rounded-full animate-spin mr-1"></span>';
+
+        trackEl.innerHTML = `
+            <img src="${track.art}" class="w-14 h-14 rounded-lg shadow-lg" alt="${track.title}" />
+            <div class="flex-1 min-w-0">
+                <h3 class="text-white font-medium truncate">${track.title || 'Untitled'}</h3>
+                <p class="text-gray-400 text-sm truncate">${track.artist || 'Unknown Artist'}</p>
+                <div class="relative w-full h-2 bg-gray-600 rounded mt-2 overflow-hidden">
+                    <div class="progress-bar bg-blue-500 h-full w-0"></div>
+                </div>
             </div>
-        </div>
-        <button class="play-btn p-2 text-gray-300 hover:text-white">▶️</button>
-        <span class="text-xs text-gray-400 min-w-[70px] song-duration">0:00 / ${durationText}</span>
-    `;
+            <button class="play-btn p-2 text-gray-300 hover:text-white">▶️</button>
+            <span class="text-xs text-gray-400 min-w-[70px] song-duration">0:00 / ${durationSpinner}</span>
+        `;
 
-    const playBtn = trackEl.querySelector('.play-btn');
-    const progressBar = trackEl.querySelector('.progress-bar');
-    const timeLabel = trackEl.querySelector('.song-duration');
+        const playBtn = trackEl.querySelector('.play-btn');
+        const progressBar = trackEl.querySelector('.progress-bar');
+        const timeLabel = trackEl.querySelector('.song-duration');
 
-    // Pre-load audio to get duration
-    const tempAudio = new Audio(track.preview);
-    tempAudio.onloadedmetadata = function () {
-        const duration = formatTime(tempAudio.duration);
-        timeLabel.textContent = `0:00 / ${duration}`;
-        tempAudio.remove(); // Clean up
-    };
+        const tempAudio = new Audio(track.preview);
+        tempAudio.onloadedmetadata = function () {
+            const duration = formatTime(tempAudio.duration);
+            timeLabel.textContent = `0:00 / ${duration}`;
+            tempAudio.remove();
+        };
 
-    trackEl.addEventListener('click', () => togglePlay(index, playBtn, progressBar, timeLabel));
-    playlistEl.appendChild(trackEl);
-});
+        tempAudio.onerror = function () {
+            timeLabel.textContent = `0:00 / --:--`;
+        };
+
+        trackEl.addEventListener('click', () => togglePlay(index, playBtn, progressBar, timeLabel));
+        playlistEl.appendChild(trackEl);
+    });
+}
+
+document.getElementById('musicBtn').addEventListener('click', initMusicPlayer);
 
 function togglePlay(index, playBtn, progressBar, timeLabel) {
     if (currentlyPlayingIndex === index && !currentAudio.paused) {
